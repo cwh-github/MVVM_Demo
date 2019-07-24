@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data class="MineDataBinding">
+        <variable
+            name="viewModel"
+            type="com.example.mvvm_jetpack.app.mine.MineViewModel"/>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+
+            <ImageView
+                android:id="@+id/mImgUser"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_github"
+                app:url="@{viewModel.mUrl}"
+                />
+            <TextView
+                android:id="@+id/mUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.MUserName}"
+                android:textColor="@color/white"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:gravity="center"
+                />
+            <TextView
+                android:id="@+id/mTips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.MTips}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_weight="1"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                />
+            <TextView
+                android:id="@+id/mLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.MLocation}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="6dp"
+                />
+
+            <TextView
+                android:id="@+id/mEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.MEmail}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_weight="1"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:layout_weight="3"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                >
+                <TextView
+                    android:id="@+id/mRepos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{String.format(@string/repos_12,viewModel.mRepos),default=Repos }"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    />
+                <TextView
+                    android:id="@+id/mFollows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{String.format(@string/follows_12,viewModel.mFollows),default=Follows }"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:id="@+id/mFollowing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{String.format(@string/following_12,viewModel.mFollowing),default=Follows }"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
