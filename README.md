@@ -88,4 +88,7 @@ ViewModel 官方组件，LiveData、Lifecycle这里推荐去看这位大佬的�
 推荐参考下google官方的demo:[https://github.com/googlesamples/android-architecture/tree/todo-mvvm-live-kotlin](https://github.com/googlesamples/android-architecture/tree/todo-mvvm-live-kotlin)
 
 
+----------
+7/25/2019 4:06:59 PM 
+
 
