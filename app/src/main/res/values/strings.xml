@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MVVM_JetPack</string>
+    <string name="app_name">MVVM_Demo</string>
     <string name="repos_12">Repos : %1$d</string>
     <string name="follows_12">Follows : %1$d</string>
     <string name="following_12">Following : %1$d</string>
