@@ -5,7 +5,7 @@
 **基于MVVM构建项目，主要运用了Jetpack中的相关组件：DataBinding、ViewModel、LiveData、Lifecycle等构建MVVM项目。** </br>
 
 </br> 
-**本项目主要是练习作用和自己参考许多GitHub构建了一个属于自己的MVVM Libary，对于以后自己在创建项目时可以直接依赖，即可完成基础框架的搭建。**
+本项目主要是练习作用和自己参考许多GitHub构建了一个属于自己的MVVM Libary，对于以后自己在创建项目时可以直接依赖，即可完成基础框架的搭建。
 
 </br>
 
