@@ -1,6 +1,8 @@
 package com.example.mvvm_jetpack_lib.utils.itemdecoration
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import androidx.annotation.ColorInt
 
 
 /**
@@ -38,6 +40,59 @@ class DividerBuilder {
         this.mBottomSideLine = bottomSideLine
         return this
     }
+
+
+    fun setLeftSideLine(
+        visibility: Boolean,
+        @ColorInt color: Int,
+        drawable: Drawable? = null,
+        lineWidth: Float,
+        startPadding: Float,
+        endPadding: Float
+    ): DividerBuilder {
+        this.mLeftSildeLine = SideLine(visibility,color,drawable,lineWidth,startPadding,endPadding)
+        return this
+    }
+
+    fun setTopSideLine(
+        visibility: Boolean,
+        @ColorInt color: Int,
+        drawable: Drawable? = null,
+        lineWidth: Float,
+        startPadding: Float,
+        endPadding: Float
+    ): DividerBuilder {
+        this.mTopSideLine = SideLine(visibility,color,drawable,lineWidth,startPadding,endPadding)
+        return this
+    }
+
+    fun setRightSideline(
+        visibility: Boolean,
+        @ColorInt color: Int,
+        drawable: Drawable? = null,
+        lineWidth: Float,
+        startPadding: Float,
+        endPadding: Float
+    ): DividerBuilder {
+        this.mRightSideLine = SideLine(visibility,color,drawable,lineWidth,startPadding,endPadding)
+        return this
+    }
+
+    fun setBottomSideLine(
+        visibility: Boolean,
+        @ColorInt color: Int,
+        drawable: Drawable? = null,
+        lineWidth: Float,
+        startPadding: Float,
+        endPadding: Float
+    ): DividerBuilder {
+        this.mBottomSideLine = SideLine(visibility,color,drawable,lineWidth,startPadding,endPadding)
+        return this
+    }
+
+
+
+
 
 
     fun create(): Divider {
