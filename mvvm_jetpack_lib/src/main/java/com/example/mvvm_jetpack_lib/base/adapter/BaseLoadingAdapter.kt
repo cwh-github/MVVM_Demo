@@ -1,4 +1,4 @@
-package com.example.mvvm_jetpack_lib.base.adapter
+package com.chainspower.mywechat
 
 import android.content.Context
 import android.util.Log
@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mvvm_jetpack_lib.R
 import java.util.ArrayList
 
@@ -62,7 +64,8 @@ abstract class BaseLoadingAdapter<T>(var context: Context, var mData: MutableLis
     }
 
     /**
-     * 指定位置添加header view
+     * 指定位置添加header view (这里添加的header view 为固定占一行的宽度，
+     * 若希望只占一个item宽度的header view ,设置item view type，自行添加)
      */
     public fun addHeaderView(view: View, index: Int) {
         if (index < 0) {
@@ -73,7 +76,8 @@ abstract class BaseLoadingAdapter<T>(var context: Context, var mData: MutableLis
     }
 
     /**
-     * 添加footer view
+     * 添加footer view (这里添加的footer view 为固定占一行的宽度，
+     * 若希望只占一个item的宽度的footer view,设置 item view type,自行添加)
      */
     public fun addFooterView(view: View) {
         mFooterView.add(view)
@@ -154,6 +158,47 @@ abstract class BaseLoadingAdapter<T>(var context: Context, var mData: MutableLis
 //    fun test(){
 //        BaseQuickAdapter
 //    }
+
+
+    //用于判断是否是Grid View,设置 header 或 footer 和loading more view为占一行
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        val layoutManager = recyclerView.layoutManager
+        layoutManager?.let {
+            if (it is GridLayoutManager) {
+                it.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when {
+                            position < mHeaderView.size -> it.spanCount
+                            position < itemCount - mFooterView.size - 1 -> 1
+                            position < itemCount - 1 -> it.spanCount
+                            else -> it.spanCount
+                        }
+                    }
+
+                }
+            }
+
+
+        }
+
+    }
+
+    //用于判断是否是staggered view,设置header 或 footer 和 loading more view 为占一行
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        val layoutParams = holder.itemView.layoutParams
+        layoutParams?.let {
+            if (it is StaggeredGridLayoutManager.LayoutParams) {
+                val position = holder.layoutPosition
+                when {
+                    position < mHeaderView.size -> it.isFullSpan = true
+                    position < itemCount - mFooterView.size - 1 -> it.isFullSpan = false
+                    position < itemCount - 1 -> it.isFullSpan = true
+                    else -> it.isFullSpan = true
+                }
+            }
+        }
+
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
