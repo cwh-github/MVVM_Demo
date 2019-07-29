@@ -37,3 +37,6 @@ fun View.click(time: Long = 500,listener: (View) -> Unit) {
     }
 }
 
+
+
+
