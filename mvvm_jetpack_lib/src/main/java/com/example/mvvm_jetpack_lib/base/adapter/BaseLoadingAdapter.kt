@@ -1,4 +1,4 @@
-package com.chainspower.mywechat
+package com.example.mvvm_jetpack_lib.base.adapter
 
 import android.content.Context
 import android.util.Log

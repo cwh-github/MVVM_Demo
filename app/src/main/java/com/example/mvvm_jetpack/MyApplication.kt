@@ -15,6 +15,7 @@ import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersisto
  * Author: cwh
  */
 class MyApplication :BaseApplication(){
+
     override fun init() {
         RetrofitUtils.addInterceptor(AuthInterceptor())
         val cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(this))
