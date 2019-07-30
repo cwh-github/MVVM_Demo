@@ -13,6 +13,7 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import com.example.mvvm_jetpack_lib.R
 import com.example.mvvm_jetpack_lib.utils.LogUtils
+import com.example.mvvm_jetpack_lib.utils.ToastUtils
 import com.example.mvvm_jetpack_lib.utils.click
 
 /**
@@ -88,17 +89,17 @@ class StateLayout @JvmOverloads constructor(
 
         //init loading view
         with(mLoadingView) {
-            visibility = View.GONE
+            visibility = View.INVISIBLE
             alpha = 0f
         }
 
         with(mEmptyView) {
-            visibility = View.GONE
+            visibility = View.INVISIBLE
             alpha = 0f
         }
 
         with(mErrorView) {
-            visibility = View.GONE
+            visibility = View.INVISIBLE
             alpha = 0f
             click {
                 if (onErrorClick != null) {
@@ -131,8 +132,7 @@ class StateLayout @JvmOverloads constructor(
 
         if (view.parent == null) {
             LogUtils.d("Has not Parent")
-            addView(
-                view, LayoutParams(
+            this.addView(view, LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
@@ -276,9 +276,11 @@ class StateLayout @JvmOverloads constructor(
         return super.dispatchTouchEvent(ev)
     }
 
+
+
     //展示状态view
     private fun showStateView(state: State): StateLayout {
-        if(state.value==mState.value){
+        if(state==mState){
             return this
         }
         this.mState = state
@@ -320,6 +322,7 @@ class StateLayout @JvmOverloads constructor(
 
     inner class ShowTask(private var target: View) : Runnable {
         override fun run() {
+            LogUtils.d("Child Count is $childCount")
             for (i in 0 until childCount) {
                 if (mState == State.LOADING && isEnableLoadingShadow && getChildAt(i) === mContentView) {
                     getChildAt(i)?.let {
@@ -337,7 +340,7 @@ class StateLayout @JvmOverloads constructor(
     }
 
     private fun showAnim(view: View?) {
-        if (view == null) {
+        if (view == null || view!!.visibility==View.VISIBLE) {
             return
         }
         view.clearAnimation()
@@ -354,7 +357,7 @@ class StateLayout @JvmOverloads constructor(
     }
 
     private fun hideAnim(view: View?) {
-        if (view == null) {
+        if (view == null || view!!.visibility==View.INVISIBLE) {
             return
         }
         view.clearAnimation()

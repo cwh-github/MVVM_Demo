@@ -1,6 +1,7 @@
 package com.example.mvvm_jetpack.app.hot
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import com.example.mvvm_jetpack.R
 import com.example.mvvm_jetpack.databinding.HotDataBinding
 import com.example.mvvm_jetpack_lib.base.view.BaseFragment
 import com.example.mvvm_jetpack_lib.base.widget.StateLayout
+import com.example.mvvm_jetpack_lib.utils.LogUtils
+import com.example.mvvm_jetpack_lib.utils.ToastUtils
 import com.m4coding.coolhub.api.datasource.bean.HotDataBean
 import kotlinx.android.synthetic.main.fragment_hot.*
 import java.util.ArrayList
@@ -87,7 +90,10 @@ class HotFragment : BaseFragment<HotViewModel, HotDataBinding>() {
 
         } else {
             if (mData.isEmpty()) {
-                mStatLayout.showErrorView()
+                ToastUtils.showToast(mActivity, "Show Error")
+                LogUtils.d("Finish Inflate on Error")
+                    mStatLayout.showErrorView()
+
             } else {
                 mStatLayout.showContentView()
             }

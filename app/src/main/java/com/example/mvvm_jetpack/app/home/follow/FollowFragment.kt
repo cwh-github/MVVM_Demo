@@ -48,10 +48,11 @@ class FollowFragment : BaseLazyFragment<FollowViewModel, FollowDataBinding>() {
 
 
     override fun onFragmentVisibleToUser(isVisible: Boolean) {
-        mViewModel.onRefresh()
+
     }
 
     override fun onFragmentFirstVisible() {
+        mViewModel.onRefresh()
     }
 
     override fun initViewObserver() {
