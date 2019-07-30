@@ -17,8 +17,8 @@ import com.example.mvvm_jetpack_lib.utils.click
  * View通用点击事件，防止重复点击
  */
 @BindingAdapter("onClickCommand")
-fun onClickCommand(view: View, command: BindingComWithParams<View>) {
+fun onClickCommand(view: View, command: BindingCommand) {
     view.click {
-        command.execute(it)
+        command.execute()
     }
 }
