@@ -165,6 +165,17 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
             }
         })
 
+        /**
+         * 跳转Activity
+         */
+        mViewModel.mUIChangeEvent.startActivityEventWithClass.observe(this, Observer { it ->
+            it.getContentIfNotHandled()?.let {
+                val intent = Intent()
+                intent.setClass(this, it)
+                startActivity(intent)
+            }
+        })
+
 
     }
 
@@ -209,8 +220,8 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
      *
      * @param cls
      * @param <T>
-     * @return
-    </T> */
+     * @return</T>
+     * */
     fun <T : ViewModel> createViewModel(activity: FragmentActivity, cls: Class<T>): T {
         return ViewModelProviders.of(activity).get(cls)
     }

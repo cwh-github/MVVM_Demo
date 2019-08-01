@@ -19,10 +19,8 @@ object DefaultGlobalErrorHandle {
         GlobalErrorTransformer<T>(onErrorResumeNext = {
             //做一些自己需要的处理
             val exceptionHandle = ExceptionHandle.handleException(it)
-            LogUtils.d("it is ${it.message}  Thread is ${Thread.currentThread()}")
             Observable.error(it)
         }, onErrorOpe = {
-            LogUtils.d("it is ${it.message}  Thread is ${Thread.currentThread()} doOnError")
             ToastUtils.showToast(
                 ConUtils.mContext(),
                 ExceptionHandle.handleException(it)

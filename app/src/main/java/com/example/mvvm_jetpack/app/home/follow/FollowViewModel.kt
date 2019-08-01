@@ -35,7 +35,7 @@ class FollowViewModel(application: Application) : BaseViewModel<FollowRepository
     fun getFollowEvent(pageNum:Int){
         requestNoRestful(repo.getFollow("cwh_rookie",pageNum =pageNum ),
             object :RequestCallBackNoRestful<List<EventBean>>{
-                override fun onRequsetSuccess(t: List<EventBean>) {
+                override fun onRequestSuccess(t: List<EventBean>) {
                     mLoadMoreList.value= Event(t)
                     mState.value= Event(true)
                 }
@@ -58,7 +58,7 @@ class FollowViewModel(application: Application) : BaseViewModel<FollowRepository
     fun onRefresh(){
         requestNoRestful(repo.getFollow("Season",pageNum =1 ),
             object :RequestCallBackNoRestful<List<EventBean>>{
-                override fun onRequsetSuccess(t: List<EventBean>) {
+                override fun onRequestSuccess(t: List<EventBean>) {
                     mRefreshList.value= Event(t)
                     mState.value= Event(true)
                 }

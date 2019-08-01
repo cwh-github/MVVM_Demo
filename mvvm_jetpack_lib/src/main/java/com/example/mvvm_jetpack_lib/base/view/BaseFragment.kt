@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
@@ -174,6 +175,17 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
             }
         })
 
+        /**
+         * 跳转Activity
+         */
+        mViewModel.mUIChangeEvent.startActivityEventWithClass.observe(this, Observer { it ->
+            it.getContentIfNotHandled()?.let {
+                val intent = Intent()
+                intent.setClass(mActivity, it)
+                startActivity(intent)
+            }
+        })
+
 
     }
 
@@ -222,6 +234,23 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
     </T> */
     fun <T : ViewModel> createViewModel(fragment: Fragment, cls: Class<T>): T {
         return ViewModelProviders.of(fragment).get(cls)
+    }
+
+    /**
+     * 创建ViewModel，由于现在定义的ViewModel含有Repository，
+     * 所以一般能调用该方法生成ViewModel，需要自己创建Factory来创建
+     *
+     * 此方法调用的是系统默认的{@link AndroidViewModelFactory}
+     *
+     * 此Factory默认的是找一个以application为参数的构造方法构造实例，如果此构造方法不存在，会报错，
+     * 就算生成成功，此时Repository为null,不能调用Repository的方法获取数据
+     *
+     * @param cls
+     * @param <T>
+     * @return</T>
+     * */
+    fun <T : ViewModel> createViewModel(activity: FragmentActivity, cls: Class<T>): T {
+        return ViewModelProviders.of(activity).get(cls)
     }
 
 

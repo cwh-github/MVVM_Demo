@@ -8,8 +8,6 @@ import com.example.mvvm_jetpack_lib.REQ_SUC
 import com.example.mvvm_jetpack_lib.base.Entity
 import com.example.mvvm_jetpack_lib.base.Event
 import com.example.mvvm_jetpack_lib.base.repository.IRepository
-import com.example.mvvm_jetpack_lib.base.viewmodel.RequestCallBack
-import com.example.mvvm_jetpack_lib.base.viewmodel.IBaseViewModel
 import com.example.mvvm_jetpack_lib.utils.exception.DefaultGlobalErrorHandle
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -86,7 +84,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             }
             .compose(DefaultGlobalErrorHandle.creatreGlobalTransfomer<T>())
             .subscribe({
-                callBackNoRestful.onRequsetSuccess(it)
+                callBackNoRestful.onRequestSuccess(it)
             }, {
                 callBackNoRestful.onError(it)
             })
@@ -150,6 +148,11 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
          * 跳转Activity with Intent
          */
         val startActivityEventWithIntent: MutableLiveData<Event<Intent>> = MutableLiveData()
+
+        /**
+         * 跳转Activity with class ,不携带数据
+         */
+        val startActivityEventWithClass:MutableLiveData<Event<Class<*>>> = MutableLiveData()
 
         /**
          * onBackPress

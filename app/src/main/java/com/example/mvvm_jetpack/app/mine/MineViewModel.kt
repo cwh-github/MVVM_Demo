@@ -30,7 +30,7 @@ class MineViewModel(application: Application) : BaseViewModel<MineRepository>(ap
 
     fun getMineInfo() {
         requestNoRestful(repo.getMineInfo(), object : RequestCallBackNoRestful<UserBean> {
-            override fun onRequsetSuccess(t: UserBean) {
+            override fun onRequestSuccess(t: UserBean) {
                 mState.value = Event(true)
                 mUrl.value = t.avatarUrl ?: ""
                 mUserName.value = t.login ?: ""

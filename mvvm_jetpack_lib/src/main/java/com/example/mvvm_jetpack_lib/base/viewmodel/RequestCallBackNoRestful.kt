@@ -7,6 +7,8 @@ package com.example.mvvm_jetpack_lib.base.viewmodel
  */
 interface RequestCallBackNoRestful<T> : CallBack {
 
+    override fun onStart()
+
     /**
      * 请求成功的回调
      *
@@ -15,6 +17,6 @@ interface RequestCallBackNoRestful<T> : CallBack {
      * 在次函数中需要对结果进行判断，是否返回了需要的结果
      *
      */
-    fun onRequsetSuccess(t: T)
+    fun onRequestSuccess(t: T)
 
 }

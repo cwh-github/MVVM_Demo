@@ -27,7 +27,7 @@ class HotViewModel(application: Application) : BaseViewModel<HotRepository>(appl
     fun getTrending() {
         requestNoRestful(repo.getTrending("", "monthly"),
             object : RequestCallBackNoRestful<List<HotDataBean>> {
-                override fun onRequsetSuccess(t: List<HotDataBean>) {
+                override fun onRequestSuccess(t: List<HotDataBean>) {
                     mHotList.value = Event(t)
                     finish.value = Event(true)
                 }

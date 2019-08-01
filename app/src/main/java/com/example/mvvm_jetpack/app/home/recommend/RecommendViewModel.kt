@@ -34,7 +34,7 @@ class RecommendViewModel(application: Application) :
     fun getRecommendList(pageNum: Int) {
         requestNoRestful(repo.getRecommendList(pageNum),
             object : RequestCallBackNoRestful<ArrayList<RecommendBean>> {
-                override fun onRequsetSuccess(t: ArrayList<RecommendBean>) {
+                override fun onRequestSuccess(t: ArrayList<RecommendBean>) {
                     mLoadMoreList.value = Event(t)
                     mState.value = Event(true)
                 }
@@ -65,7 +65,7 @@ class RecommendViewModel(application: Application) :
     fun onRefresh() {
         requestNoRestful(repo.getRecommendList(1),
             object : RequestCallBackNoRestful<ArrayList<RecommendBean>> {
-                override fun onRequsetSuccess(t: ArrayList<RecommendBean>) {
+                override fun onRequestSuccess(t: ArrayList<RecommendBean>) {
                     mRefreshList.value= Event(t)
                     mState.value = Event(true)
                 }
