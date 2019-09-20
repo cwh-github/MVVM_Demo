@@ -14,5 +14,9 @@ enum class ResponseState(val value: Int) {
     /**
      * 请求成功
      */
-    SUCCESS(0)
+    SUCCESS(1),
+    /**
+     * 请求中
+     */
+    LOADING(0)
 }

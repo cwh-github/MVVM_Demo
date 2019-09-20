@@ -27,6 +27,7 @@ class MineFragment : BaseFragment<MineViewModel, MineDataBinding>() {
 
     private lateinit var mStatLayout: StateLayout
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mStatLayout = StateLayout(activity!!).wrap(super.onCreateView(inflater, container, savedInstanceState))
             .showLoading()

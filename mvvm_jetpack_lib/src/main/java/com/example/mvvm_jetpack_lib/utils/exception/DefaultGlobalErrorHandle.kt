@@ -15,7 +15,7 @@ import io.reactivex.Observable
 object DefaultGlobalErrorHandle {
 
 
-    fun <T> creatreGlobalTransfomer(): GlobalErrorTransformer<T> =
+    fun <T> createGlobalTransformer(): GlobalErrorTransformer<T> =
         GlobalErrorTransformer<T>(onErrorResumeNext = {
             //做一些自己需要的处理
             val exceptionHandle = ExceptionHandle.handleException(it)

@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.AsyncTask
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.View

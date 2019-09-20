@@ -19,7 +19,6 @@ import java.util.HashMap
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import okhttp3.Credentials
 import java.net.*
 
 

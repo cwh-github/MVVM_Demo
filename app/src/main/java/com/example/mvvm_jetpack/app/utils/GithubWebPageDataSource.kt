@@ -1,6 +1,5 @@
-package com.example.mvvm_jetpack.app.Utils
+package com.example.mvvm_jetpack.app.utils
 
-import com.example.mvvm_jetpack.app.Utils.GitHubHtmlParseUtils
 import com.example.mvvm_jetpack.app.api.ApiService
 import com.example.mvvm_jetpack_lib.utils.net.RetrofitUtils
 import io.reactivex.Observable

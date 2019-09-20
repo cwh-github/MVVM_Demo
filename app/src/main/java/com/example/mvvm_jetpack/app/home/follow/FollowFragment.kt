@@ -14,7 +14,7 @@ import com.example.mvvm_jetpack.databinding.FollowDataBinding
 import com.example.mvvm_jetpack_lib.base.view.BaseLazyFragment
 import com.example.mvvm_jetpack_lib.base.widget.StateLayout
 import kotlinx.android.synthetic.main.fragment_follow.*
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Description:
@@ -43,6 +43,7 @@ class FollowFragment : BaseLazyFragment<FollowViewModel, FollowDataBinding>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mStateLayout = StateLayout(mActivity)
             .wrap(super.onCreateView(inflater, container, savedInstanceState)).showLoading()
+
         return mStateLayout
     }
 

@@ -14,7 +14,7 @@ interface RequestCallBackNoRestful<T> : CallBack {
      *
      * 请求服务器成功，但不一定返回成功数据
      *
-     * 在次函数中需要对结果进行判断，是否返回了需要的结果
+     * 在此函数中需要对结果进行判断，是否返回了需要的结果
      *
      */
     fun onRequestSuccess(t: T)

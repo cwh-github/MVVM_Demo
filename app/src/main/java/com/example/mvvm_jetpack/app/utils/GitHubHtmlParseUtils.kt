@@ -1,4 +1,4 @@
-package com.example.mvvm_jetpack.app.Utils
+package com.example.mvvm_jetpack.app.utils
 
 import com.m4coding.coolhub.api.datasource.bean.HotDataBean
 import com.m4coding.coolhub.api.datasource.bean.RecommendBean

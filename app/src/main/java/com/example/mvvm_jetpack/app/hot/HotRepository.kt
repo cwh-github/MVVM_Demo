@@ -1,7 +1,6 @@
 package com.example.mvvm_jetpack.app.hot
 
-import com.example.mvvm_jetpack.app.Utils.GitHubHtmlParseUtils
-import com.example.mvvm_jetpack.app.Utils.GithubWebPageDataSource
+import com.example.mvvm_jetpack.app.utils.GitHubHtmlParseUtils
 import com.example.mvvm_jetpack.app.api.ApiService
 import com.example.mvvm_jetpack_lib.base.repository.BaseRepositoryRemote
 import com.example.mvvm_jetpack_lib.utils.net.RetrofitUtils

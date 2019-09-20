@@ -3,7 +3,7 @@ package com.example.mvvm_jetpack.app.login
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.example.mvvm_jetpack.app.MainActivity
-import com.example.mvvm_jetpack.app.Utils.SPUtils
+import com.example.mvvm_jetpack.app.utils.SPUtils
 import com.example.mvvm_jetpack.app.bean.AuthUser
 import com.example.mvvm_jetpack_lib.base.Event
 import com.example.mvvm_jetpack_lib.base.viewmodel.BaseViewModel
@@ -63,7 +63,7 @@ class LoginViewModel(application: Application) :
                 mUIChangeEvent.isShowLoadView.value = Event(false)
                 LogUtils.d("Thread is ${Thread.currentThread()}")
             }
-            .compose(DefaultGlobalErrorHandle.creatreGlobalTransfomer<AuthUser>())
+            .compose(DefaultGlobalErrorHandle.createGlobalTransformer<AuthUser>())
             .subscribe({
                 tips.value = Event("登录成功!")
                 SPUtils.saveAccount(getApplication(), userName.value!!, password.value!!)

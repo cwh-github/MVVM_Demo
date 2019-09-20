@@ -1,6 +1,6 @@
 package com.example.mvvm_jetpack.app.login
 
-import com.example.mvvm_jetpack.app.Utils.GithubWebPageDataSource
+import com.example.mvvm_jetpack.app.utils.GithubWebPageDataSource
 import com.example.mvvm_jetpack.app.api.ApiService
 import com.example.mvvm_jetpack.app.bean.AuthRequestBean
 import com.example.mvvm_jetpack.app.bean.AuthUser

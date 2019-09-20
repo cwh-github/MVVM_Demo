@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.example.mvvm_jetpack_lib.base.Event
 import com.example.mvvm_jetpack_lib.base.viewmodel.BaseViewModel
 import com.example.mvvm_jetpack_lib.utils.LogUtils
 

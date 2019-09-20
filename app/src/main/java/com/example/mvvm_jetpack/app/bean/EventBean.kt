@@ -260,4 +260,34 @@ class EventBean {
         return "EventBean(type=$type, public=$public, " +
                 "payload=$payload, repo=$repo, actor=$actor, org=$org, createdAt=$createdAt, id=$id)"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EventBean
+
+        if (type != other.type) return false
+        if (public != other.public) return false
+        if (payload != other.payload) return false
+        if (repo != other.repo) return false
+        if (actor != other.actor) return false
+        if (org != other.org) return false
+        if (createdAt != other.createdAt) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = type?.hashCode() ?: 0
+        result = 31 * result + public.hashCode()
+        result = 31 * result + (payload?.hashCode() ?: 0)
+        result = 31 * result + (repo?.hashCode() ?: 0)
+        result = 31 * result + (actor?.hashCode() ?: 0)
+        result = 31 * result + (org?.hashCode() ?: 0)
+        result = 31 * result + (createdAt?.hashCode() ?: 0)
+        result = 31 * result + (id?.hashCode() ?: 0)
+        return result
+    }
 }

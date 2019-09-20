@@ -30,7 +30,6 @@ typealias OnErrorRetryOpe = (Throwable) -> RetryConfig
  */
 typealias OnErrorOpe = (Throwable) -> Unit
 
-
 /**
  * @param onNextInterceptor 指定发射数据的拦截器操作，默认不做操作，直接将数据往下发送
  *
@@ -66,6 +65,8 @@ class GlobalErrorTransformer<T>(
     private val onErrorOpe: OnErrorOpe = {}
 ) : ObservableTransformer<T, T>, FlowableTransformer<T, T>, SingleTransformer<T, T>,
     MaybeTransformer<T, T>, CompletableTransformer {
+
+
 
     var mRetryCount = 0
 

@@ -1,6 +1,6 @@
 package com.example.mvvm_jetpack.app.interceptor
 
-import com.example.mvvm_jetpack.app.Utils.SPUtils
+import com.example.mvvm_jetpack.app.utils.SPUtils
 import com.example.mvvm_jetpack_lib.utils.ConUtils
 import okhttp3.Interceptor
 import okhttp3.Response

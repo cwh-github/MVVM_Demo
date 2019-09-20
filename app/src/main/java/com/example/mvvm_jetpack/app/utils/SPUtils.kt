@@ -1,8 +1,8 @@
-package com.example.mvvm_jetpack.app.Utils
+package com.example.mvvm_jetpack.app.utils
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.core.content.edit
+
 
 /**
  * Description:
@@ -12,13 +12,13 @@ import androidx.core.content.edit
 class SPUtils {
 
     companion object {
-        const val SP_CONFIG = "config"
+        private const val SP_CONFIG = "config"
 
-        const val USER_NAME = "user_name"
+        private const val USER_NAME = "user_name"
 
-        const val PASSWORD = "password"
+        private const val PASSWORD = "password"
 
-        const val TOKEN = "token"
+        private const val TOKEN = "token"
 
 
         fun saveAccount(context: Context, userName: String, password: String) {

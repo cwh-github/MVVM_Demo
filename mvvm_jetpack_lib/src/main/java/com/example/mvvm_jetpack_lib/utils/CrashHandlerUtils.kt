@@ -28,8 +28,12 @@ class CrashHandlerUtils private constructor() : Thread.UncaughtExceptionHandler 
 
 
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
-        //收集处理错误信息
-        saveExceptionToLocal(throwable)
+        try {
+            //收集处理错误信息
+            saveExceptionToLocal(throwable)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         //交给系统处理异常
         mDefaultExceptionHandler?.uncaughtException(thread, throwable)
 
@@ -100,8 +104,8 @@ class CrashHandlerUtils private constructor() : Thread.UncaughtExceptionHandler 
             return instance ?: synchronized(this) {
                 instance
                     ?: CrashHandlerUtils().also {
-                    instance = it
-                }
+                        instance = it
+                    }
             }
         }
 

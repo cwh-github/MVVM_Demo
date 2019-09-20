@@ -56,7 +56,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             .doFinally {
                 callBack.onFinally()
             }
-            .compose(DefaultGlobalErrorHandle.creatreGlobalTransfomer<T>())
+            .compose(DefaultGlobalErrorHandle.createGlobalTransformer<T>())
             .subscribe({
                 if (it.code == REQ_SUC) {
                     callBack.onSuccess(it)
@@ -82,7 +82,7 @@ abstract class BaseViewModel<T : IRepository>(application: Application) :
             .doFinally {
                 callBackNoRestful.onFinally()
             }
-            .compose(DefaultGlobalErrorHandle.creatreGlobalTransfomer<T>())
+            .compose(DefaultGlobalErrorHandle.createGlobalTransformer<T>())
             .subscribe({
                 callBackNoRestful.onRequestSuccess(it)
             }, {
