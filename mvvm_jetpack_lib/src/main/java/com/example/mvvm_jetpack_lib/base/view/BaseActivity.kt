@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,10 +19,16 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.mvvm_jetpack_lib.base.Event
 import com.example.mvvm_jetpack_lib.base.viewmodel.BaseViewModel
 import com.example.mvvm_jetpack_lib.utils.LogUtils
+import java.lang.reflect.ParameterizedType
 
 
 /**
- * Description:
+ * Description:基类Activity,对于不需要用到DataBinding的界面，直接写其父类
+ * DataViewBinding即可，这样不会使用DataBinding,而会直接使用setContentView()
+ * ,此时mViewModelVariableId=-1即可
+ * 对于不需要自己定义ViewModel的界面，直接使用NoViewModel即可(还是可以使用ViewModel的
+ * 一些基本方法，如跳转界面，显示加载对话框)
+ *
  * Date：2019/7/17-18:36
  * Author: cwh
  */
@@ -41,6 +48,8 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
 
     /**
      * ViewModel 在对应的DataBindingView中生成的ID
+     * 若为不想使用ViewDataBinding的Activity,mViewModelVariableId=-1即可
+     * (且指定的ViewDataBinding类型为ViewDataBinding)
      */
     abstract var mViewModelVariableId: Int
 
@@ -75,17 +84,34 @@ abstract class BaseActivity<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
 
     }
 
+
+    private fun getParamsType(): ParameterizedType? {
+        val type = javaClass.genericSuperclass
+        return if (type is ParameterizedType) {
+            type
+        } else null
+    }
+
     /**
      * 初始化获取ViewDataBing,setContentView
      */
     protected open fun initDataBingView() {
-        mBinding = DataBindingUtil.setContentView<V>(this, layoutId)
-        //将ViewModel 与 其ID进行关联
-        mBinding.setVariable(mViewModelVariableId, mViewModel)
-        //ViewModel 具有相关View的生命周期
-        lifecycle.addObserver(mViewModel)
-        //设置LifecycleOwner，让DataBinding能感知到LiveData数据的变化
-        mBinding.lifecycleOwner = this
+        val cls = getParamsType()?.actualTypeArguments?.get(1) as? Class<*>
+        //ViewBinding是ViewDataBinding的子类
+        if (cls != null && ViewDataBinding::class.java != cls
+            && ViewDataBinding::class.java.isAssignableFrom(cls)
+        ) {
+            mBinding = DataBindingUtil.setContentView<V>(this, layoutId)
+            //将ViewModel 与 其ID进行关联
+            mBinding.setVariable(mViewModelVariableId, mViewModel)
+            //ViewModel 具有相关View的生命周期
+            lifecycle.addObserver(mViewModel)
+            //设置LifecycleOwner，让DataBinding能感知到LiveData数据的变化
+            mBinding.lifecycleOwner = this
+        } else {
+            setContentView(layoutId)
+        }
+
     }
 
     /**

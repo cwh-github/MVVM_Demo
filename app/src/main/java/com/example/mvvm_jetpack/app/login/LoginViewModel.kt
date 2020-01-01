@@ -6,6 +6,8 @@ import com.example.mvvm_jetpack.app.MainActivity
 import com.example.mvvm_jetpack.app.utils.SPUtils
 import com.example.mvvm_jetpack.app.bean.AuthUser
 import com.example.mvvm_jetpack_lib.base.Event
+import com.example.mvvm_jetpack_lib.base.command.BindingAction
+import com.example.mvvm_jetpack_lib.base.command.BindingCommand
 import com.example.mvvm_jetpack_lib.base.viewmodel.BaseViewModel
 import com.example.mvvm_jetpack_lib.utils.LogUtils
 import com.example.mvvm_jetpack_lib.utils.exception.DefaultGlobalErrorHandle
@@ -19,7 +21,7 @@ import io.reactivex.schedulers.Schedulers
  */
 class LoginViewModel(application: Application) :
     BaseViewModel<LoginRepository>(application) {
-    override val repo: LoginRepository=LoginRepository()
+    override val repo: LoginRepository = LoginRepository()
 
     //用户名
     val userName = MutableLiveData<String>()
@@ -36,7 +38,13 @@ class LoginViewModel(application: Application) :
     }
 
 
+    val mGoActivityCommand = BindingCommand(object : BindingAction {
+        override fun call() {
+            mUIChangeEvent.startActivityEventWithClass.value=
+                Event(NoViewDataBindingActivity::class.java)
+        }
 
+    })
 
 
     /**

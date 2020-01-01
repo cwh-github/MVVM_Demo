@@ -68,7 +68,7 @@
 //
 //class MyAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-//        val view = LayoutInflater.from(context).inflate(R.layout.item_recycler, parent, false)
+//        val view = LayoutInflater.from(context).com.example.mvvm_jetpack_lib.base.widget.inflate(R.layout.item_recycler, parent, false)
 //        return MyViewHolder(view)
 //    }
 //

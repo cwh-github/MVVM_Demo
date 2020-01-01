@@ -71,7 +71,7 @@ class HomeFragment : BaseNorFragment() {
     }
 
 
-    inner class MyAdapter(fm: FragmentManager?, private val mFragments: Array<Fragment>) : FragmentPagerAdapter(fm) {
+    inner class MyAdapter(fm: FragmentManager, private val mFragments: Array<Fragment>) : FragmentPagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
             return mFragments[position]
         }

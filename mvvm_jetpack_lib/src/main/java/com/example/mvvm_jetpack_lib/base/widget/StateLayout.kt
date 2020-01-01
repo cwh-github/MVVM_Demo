@@ -1,384 +1,380 @@
 package com.example.mvvm_jetpack_lib.base.widget
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
-import android.app.Activity
 import android.content.Context
-import android.graphics.Color
-import android.os.Build
 import android.util.AttributeSet
-import android.view.*
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
-import androidx.fragment.app.Fragment
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.annotation.LayoutRes
 import com.example.mvvm_jetpack_lib.R
-import com.example.mvvm_jetpack_lib.utils.LogUtils
-import com.example.mvvm_jetpack_lib.utils.ToastUtils
+import com.example.mvvm_jetpack_lib.base.widget.StateLayout.State.*
 import com.example.mvvm_jetpack_lib.utils.click
 
-/**
- * Description: 加载数据时的状态Layout,根据加载状态的不同展示不同的View
- * Date：2019/7/22-10:53
- * Author: cwh
- */
+
 class StateLayout @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    /**
-     * 加载中view
-     */
-    private var mLoadingView: View = LayoutInflater.from(context).inflate(
-        R.layout.loading_state_layout,
-        this, false
-    )
-    /**
-     * 加载成功，无数据view
-     */
-    private var mEmptyView: View = LayoutInflater.from(context).inflate(
-        R.layout.empry_state_layout,
-        this, false
-    )
+    //showContentView layout
+    private var contentLayout: View? = null
+    //showLoading layout
+    private var loadingLayout: View? = null
+    //error layout
+    private var errorLayout: View? = null
+    //empty layout
+    private var emptyLayout: View? = null
 
-    /**
-     * 加载失败view
-     */
-    private var mErrorView: View = LayoutInflater.from(context).inflate(
-        R.layout.error_state_layout,
-        this, false
-    )
+    private var state: State = CONTENT
 
-    /**
-     * content view
-     */
-    private var mContentView: View? = null
+    @LayoutRes
+    private var loadingLayoutRes: Int = R.layout.loading_state_layout
+    @LayoutRes
+    private var errorLayoutRes: Int = R.layout.error_state_layout
+    @LayoutRes
+    private var emptyLayoutRes: Int = R.layout.empty_state_layout
 
-    /**
-     * 是否在展示状态view时，显示content view 的背景
-     */
-    private var isShowContentViewBg = true
+    private var loadingAnimation: Animation? = null
+    private var loadingWithContentAnimation: Animation? = null
 
-    /**
-     * 是否启用加载状态时的半透明阴影
-     */
-    private var isEnableLoadingShadow = false
+    //显示内容加载为空时的点击事件
+    lateinit var onEmptyClick: (View) -> Unit
 
-    /**
-     * 展示error view 时，重试的回调
-     */
-    var onErrorClick: ((View) -> Unit)? = null
+    //加载内容出错时的点击事件
+    lateinit var onErrorClick: (View) -> Unit
 
 
-    private var mState: State = State.NONE
-
-    /**
-     * 默认动画执行时间
-     */
-    private var mDuration: Long = 250L
-
-
-    /**
-     * 将给定的加载成功content显示的view,放到StateLayout
-     *
-     * 将stateLayout 作为整体需要显示的View
-     */
-    fun wrap(view: View?): StateLayout {
-        if (view == null) {
-            throw NullPointerException("Content view can not null")
+    init {
+        if (isInEditMode) {
+            state = CONTENT
         }
 
-        //init loading view
-        with(mLoadingView) {
-            visibility = View.INVISIBLE
-            alpha = 0f
-        }
+        context.theme.obtainStyledAttributes(attrs, R.styleable.StateLayout, 0, 0)
+            .apply {
+                try {
+                    state =
+                        values()[getInteger(R.styleable.StateLayout_sl_state, NONE.ordinal)]
+                    loadingLayoutRes = getResourceId(
+                        R.styleable.StateLayout_sl_loadingLayout,
+                        R.layout.loading_state_layout
+                    )
+                    errorLayoutRes = getResourceId(
+                        R.styleable.StateLayout_sl_infoLayout,
+                        R.layout.error_state_layout
+                    )
+                    emptyLayoutRes = getResourceId(
+                        R.styleable.StateLayout_sl_loadingWithContentLayout,
+                        R.layout.empty_state_layout
+                    )
 
-        with(mEmptyView) {
-            visibility = View.INVISIBLE
-            alpha = 0f
-        }
-
-        with(mErrorView) {
-            visibility = View.INVISIBLE
-            alpha = 0f
-            click {
-                if (onErrorClick != null) {
-                    showLoading()
-                    onErrorClick!!(it)
+                    getResourceId(R.styleable.StateLayout_sl_loadingAnimation, 0).notZero {
+                        loadingAnimation = AnimationUtils.loadAnimation(context, it)
+                    }
+                    getResourceId(
+                        R.styleable.StateLayout_sl_loadingWithContentAnimation,
+                        0
+                    ).notZero {
+                        loadingWithContentAnimation = AnimationUtils.loadAnimation(context, it)
+                    }
+                } finally {
+                    recycle()
                 }
             }
-        }
-
-        with(view) {
-            visibility = View.GONE
-            alpha = 0f
-        }
-
-        //add contentview to parent
-
-        mContentView = view
-        if (isShowContentViewBg) {
-            mContentView?.let {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    background = it.background
-                }
-            }
-        }
-
-        addViewWithLayout(mLoadingView)
-        addViewWithLayout(mEmptyView)
-        addViewWithLayout(mErrorView)
-
-
-        if (view.parent == null) {
-            LogUtils.d("Has not Parent")
-            this.addView(view, LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            )
-        } else {
-            LogUtils.d("Has Parent")
-            val parent = view.parent as ViewGroup
-            val params = view.layoutParams
-            val index = parent.indexOfChild(view)
-            parent.removeView(view)
-            addView(
-                view, LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            )
-            parent.addView(this, index, params)
-        }
-
-        //默认显示loading View
-        showStateView(State.LOADING)
-        return this
     }
-
-    fun wrap(activity: Activity): StateLayout {
-        return wrap((activity.findViewById(android.R.id.content) as ViewGroup).getChildAt(0))
-    }
-
-    fun wrap(fragment: Fragment): StateLayout {
-        return wrap(fragment.view)
-    }
-
-    /**
-     * 展示Loading View
-     */
-    fun showLoading(): StateLayout {
-        showStateView(State.LOADING)
-        return this
-    }
-
-    /**
-     * 展示empty View
-     */
-    fun showEmptyView(): StateLayout {
-        showStateView(State.EMPTY)
-        return this
-    }
-
-
-    /**
-     * 展示Error view
-     */
-    fun showErrorView(): StateLayout {
-        showStateView(State.ERROR)
-        return this
-    }
-
-    /**
-     * 展示 Content view
-     */
-    fun showContentView(): StateLayout {
-        showStateView(State.CONTENT)
-        return this
-    }
-
-    /**
-     * 配置StateLayout
-     * @param loadingView loading view
-     * @param emptyView Empty view
-     * @param errorView Error view
-     * @param showContentViewBg 是否显示Content view 的背景
-     * @param enableLoadingShadow 是否在加载时显示加载阴影
-     * @param animationDuration 显示与隐藏动画的执行时间
-     *@param errorClick Error view 显示时，点击的回调
-     */
-    fun config(
-        loadingView: View = mLoadingView, emptyView: View = mEmptyView,
-        errorView: View = mErrorView, showContentViewBg: Boolean = true,
-        enableLoadingShadow: Boolean = false, animationDuration: Long = 250,
-        errorClick: ((View) -> Unit)? = onErrorClick
-    ): StateLayout {
-        mLoadingView = loadingView
-        mEmptyView = emptyView
-        mErrorView = errorView
-        isShowContentViewBg = showContentViewBg
-        isEnableLoadingShadow = enableLoadingShadow
-        mDuration = animationDuration
-        onErrorClick = errorClick
-        return this
-    }
-
-    /**
-     * 配置StateLayout
-     * @param loadingViewId loading view Id
-     * @param emptyViewId Empty view Id
-     * @param errorViewId Error view Id
-     * @param showContentViewBg 是否显示Content view 的背景
-     * @param enableLoadingShadow 是否在加载时显示加载阴影
-     * @param animationDuration 显示与隐藏动画的执行时间
-     *@param errorClick Error view 显示时，点击的回调
-     */
-    fun config(
-        loadingViewId: Int = 0, emptyViewId: Int = 0,
-        errorViewId: Int = 0, showContentViewBg: Boolean = true,
-        enableLoadingShadow: Boolean = false, animationDuration: Long = 250,
-        errorClick: ((View) -> Unit)? = onErrorClick
-    ): StateLayout {
-        if (loadingViewId != 0) {
-            mLoadingView = inflater(loadingViewId)
-        }
-        if (emptyViewId != 0) {
-            mEmptyView = inflater(emptyViewId)
-        }
-        if (errorViewId != 0) {
-            mErrorView = inflater(errorViewId)
-        }
-        isShowContentViewBg = showContentViewBg
-        isEnableLoadingShadow = enableLoadingShadow
-        mDuration = animationDuration
-        onErrorClick = errorClick
-        return this
-    }
-
-
-    private fun inflater(id: Int): View = LayoutInflater.from(context).inflate(id, this, false)
-
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        if (mContentView == null) {
-            throw IllegalArgumentException("contentView can not be null!")
-        }
+        setupContentState()
+        setupLoadingState()
+        setupErrorState()
+        setupEmptyContentState()
+
+        updateWithState()
+        checkChildCount()
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (mState == State.LOADING && mLoadingView != null
-            && mLoadingView.visibility == View.VISIBLE
-        ) {
-            return true
-        }
-        return super.dispatchTouchEvent(ev)
+    /**
+     * 获取当前加载状态
+     */
+    fun getState():State{
+        return state
     }
 
+    //初始设置content不显示
+    private fun setupContentState() {
+        contentLayout = getChildAt(0)
+        contentLayout?.visibility = View.INVISIBLE
+        contentLayout?.alpha = 0f
+    }
 
+    private fun setupLoadingState() {
+        loadingLayout = inflate(loadingLayoutRes)
+        loadingLayout?.visibility = View.INVISIBLE
+        loadingLayout?.alpha = 0f
+        addView(loadingLayout)
+    }
 
-    //展示状态view
-    private fun showStateView(state: State): StateLayout {
-        if(state==mState){
-            return this
+    private fun setupErrorState() {
+        errorLayout = inflate(errorLayoutRes)
+        errorLayout?.visibility = View.INVISIBLE
+        errorLayout?.alpha = 0f
+        errorLayout?.click {
+            if (::onErrorClick.isInitialized) {
+                showLoading()
+                onErrorClick(it)
+            }
+
         }
-        this.mState = state
+        addView(errorLayout)
+    }
+
+    private fun setupEmptyContentState() {
+        emptyLayout = inflate(emptyLayoutRes)
+        emptyLayout?.visibility = View.INVISIBLE
+        emptyLayout?.alpha = 0f
+        emptyLayout?.click {
+            if (::onEmptyClick.isInitialized) {
+                onEmptyClick(it)
+            }
+
+        }
+        addView(emptyLayout)
+    }
+
+    private fun updateWithState() {
         when (state) {
-            State.LOADING -> {
-                if (!isEnableLoadingShadow) {
-                    mLoadingView.setBackgroundResource(0)
-                } else {
-                    mLoadingView.setBackgroundColor(Color.parseColor("#66000000"))
-                }
-                showView(mLoadingView)
-            }
+            LOADING -> showLoading()
+            CONTENT -> showContentView()
+            INFO, ERROR, EMPTY -> showErrorView()
+            EMPTY_CONTENT -> showEmptyView()
+            NONE -> hideAll()
+        }
+    }
 
-            State.EMPTY -> {
-                showView(mEmptyView)
-            }
+    private fun checkChildCount() {
+        if (childCount > 4 || childCount == 0) {
+            throwChildCountException()
+        }
+    }
 
-            State.ERROR -> {
-                showView(mErrorView)
-            }
+    private fun hideAll() {
+        updateLoadingVisibility(View.INVISIBLE)
+        contentLayout.gone()
+        errorLayout.gone()
+        updateEmptyContentVisibility(View.INVISIBLE)
+    }
 
-            State.CONTENT -> {
-                mContentView?.let { showView(it) }
+    private fun updateLoadingVisibility(visibility: Int) =
+        when (visibility) {
+            View.VISIBLE -> {
+                loadingLayout.visible {}
+            }
+            else -> {
+                loadingLayout.gone { }
             }
         }
 
+    private fun updateEmptyContentVisibility(visibility: Int) =
+        when (visibility) {
+            View.VISIBLE -> emptyLayout.visible { }
+            else -> emptyLayout.gone {}
+        }
+
+    private fun throwChildCountException(): Nothing =
+        throw IllegalStateException("StateLayout can host only one direct child")
+
+    /**
+     * 设置初始化，刚加载完成时的状态
+     */
+    fun initialState(state: State) {
+        this.state = state
+    }
+
+    /**
+     * 设置加载时的显示的message
+     */
+    fun loadingMessage(message: String): StateLayout {
+        loadingLayout.findView<TextView>(R.id.mLoadMsg) {
+            text = message
+            visibility = View.VISIBLE
+        }
+        return showLoading()
+    }
+
+    fun loadingAnimation(animation: Animation): StateLayout {
+        loadingAnimation = animation
+        return showLoading()
+    }
+
+    /**
+     * 展示loading状态
+     */
+    fun showLoading(): StateLayout {
+        state = LOADING
+        updateLoadingVisibility(View.VISIBLE)
+        contentLayout.gone()
+        errorLayout.gone()
+        updateEmptyContentVisibility(View.INVISIBLE)
         return this
     }
 
-    private fun showView(view: View) {
-        if (mShowTask != null) {
-            removeCallbacks(mShowTask)
-        }
-        mShowTask = ShowTask(view)
-        post(mShowTask)
+    fun showLoading(@LayoutRes layoutId: Int) {
+        this.loadingLayoutRes = layoutId
+        removeView(loadingLayout)
+        setupLoadingState()
+        showState(provideLoadingStateInfo())
     }
 
-    private var mShowTask: ShowTask? = null
+    /**
+     * 展示content
+     */
+    fun showContentView(): StateLayout {
+        state = CONTENT
+        updateLoadingVisibility(View.INVISIBLE)
+        contentLayout.visible()
+        errorLayout.gone()
+        updateEmptyContentVisibility(View.INVISIBLE)
+        return this
+    }
 
-    inner class ShowTask(private var target: View) : Runnable {
-        override fun run() {
-            LogUtils.d("Child Count is $childCount")
-            for (i in 0 until childCount) {
-                if (mState == State.LOADING && isEnableLoadingShadow && getChildAt(i) === mContentView) {
-                    getChildAt(i)?.let {
-                        showAnim(it)
-                    }
-                    continue
-                }
-                if (getChildAt(i) !== target) {
-                    hideAnim(getChildAt(i))
-                }
+    /**
+     * 设置加载错误时的Img
+     */
+    fun errorImage(imageRes: Int): StateLayout {
+        errorLayout.findView<ImageView>(R.id.mImgError) {
+            setImageResource(imageRes)
+            visibility = View.VISIBLE
+        }
+        return showErrorView()
+    }
 
+    /**
+     * 设置加载error时的Message
+     */
+    fun errorMessage(message: String): StateLayout {
+        errorLayout.findView<TextView>(R.id.mTvErrorMsg) {
+            text = message
+            visibility = View.VISIBLE
+        }
+        return showErrorView()
+    }
+
+
+    fun showErrorView(): StateLayout {
+        state = INFO
+        updateLoadingVisibility(View.INVISIBLE)
+        contentLayout.gone()
+        errorLayout.visible()
+        updateEmptyContentVisibility(View.INVISIBLE)
+        return this
+    }
+
+    //test
+//    fun showErrorView(): StateLayout {
+//        state = INFO
+//        updateLoadingVisibility(View.INVISIBLE)
+//        contentLayout.com.example.mvvm_jetpack_lib.base.widget.visible()
+//        errorLayout.com.example.mvvm_jetpack_lib.base.widget.gone()
+//        updateEmptyContentVisibility(View.INVISIBLE)
+//        return this
+//    }
+
+    fun showErrorView(@LayoutRes layoutId: Int) {
+        this.errorLayoutRes = layoutId
+        removeView(errorLayout)
+        setupErrorState()
+        showState(provideInfoStateInfo())
+    }
+
+    fun loadingWithContentAnimation(animation: Animation): StateLayout {
+        loadingWithContentAnimation = animation
+        return showEmptyView()
+    }
+
+    fun showEmptyView(): StateLayout {
+        state = EMPTY_CONTENT
+        updateLoadingVisibility(View.INVISIBLE)
+        contentLayout.gone()
+        errorLayout.gone()
+        updateEmptyContentVisibility(View.VISIBLE)
+        return this
+    }
+
+    fun showEmptyView(@LayoutRes layoutId: Int) {
+        this.emptyLayoutRes = layoutId
+        removeView(emptyLayout)
+        setupEmptyContentState()
+        showState(provideLoadingWithContentStateInfo())
+    }
+
+    fun showLoading(stateInfo: StateInfo?) = showState(stateInfo)
+
+    fun showContentView(stateInfo: StateInfo?) = showState(stateInfo)
+
+    fun showInfo(stateInfo: StateInfo?) = showState(stateInfo)
+
+    fun showLoadingWithContent(stateInfo: StateInfo?) = showState(stateInfo)
+
+    fun showErrorView(stateInfo: StateInfo?) = showState(stateInfo)
+
+    fun showEmptyView(stateInfo: StateInfo?) = showState(stateInfo)
+
+    fun showState(stateInfo: StateInfo?) {
+        loadingAnimation = stateInfo?.loadingAnimation
+        loadingWithContentAnimation = stateInfo?.loadingWithContentAnimation
+        when (stateInfo?.state) {
+            LOADING -> showLoading()
+            CONTENT -> showContentView()
+            EMPTY_CONTENT -> showEmptyView()
+            INFO, ERROR, EMPTY -> {
+                stateInfo.infoImage?.let { errorImage(it) }
+                stateInfo.infoMessage?.let { errorMessage(it) }
             }
-            showAnim(target)
+            null, NONE -> hideAll()
         }
     }
 
-    private fun showAnim(view: View?) {
-        if (view == null || view!!.visibility==View.VISIBLE) {
-            return
-        }
-        view.clearAnimation()
-        val animator = ObjectAnimator.ofFloat(view, "alpha", 0f, 1.0f)
-        animator.duration = mDuration
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?, isReverse: Boolean) {
-                view.visibility = View.VISIBLE
-            }
-        })
-        animator.start()
+    companion object {
+        @JvmStatic
+        fun provideLoadingStateInfo() = StateInfo(state = LOADING)
 
+        @JvmStatic
+        fun provideContentStateInfo() = StateInfo(state = CONTENT)
 
+        @JvmStatic
+        fun provideErrorStateInfo() = StateInfo(state = ERROR)
+
+        @JvmStatic
+        fun provideLoadingWithContentStateInfo() = StateInfo(state = EMPTY_CONTENT)
+
+        @JvmStatic
+        fun provideInfoStateInfo() = StateInfo(state = INFO)
+
+        @JvmStatic
+        fun provideEmptyStateInfo() = StateInfo(state = EMPTY)
+
+        @JvmStatic
+        fun provideNoneStateInfo() = StateInfo(state = NONE)
     }
 
-    private fun hideAnim(view: View?) {
-        if (view == null || view!!.visibility==View.INVISIBLE) {
-            return
-        }
-        view.clearAnimation()
-        val animator = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0.0f)
-        animator.duration = mDuration
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?, isReverse: Boolean) {
-                view.visibility = View.INVISIBLE
-            }
-        })
-        animator.start()
+    interface OnStateLayoutListener {
+        fun onStateLayoutInfoButtonClick()
     }
 
-
-    private fun addViewWithLayout(view: View?) {
-        if (view == null) {
-            return
-        }
-        addView(view)
-        val params = view.layoutParams
-        (params as LayoutParams).gravity = Gravity.CENTER
-        view.layoutParams = params
+    enum class State {
+        LOADING, CONTENT, INFO, EMPTY_CONTENT, ERROR, EMPTY, NONE
     }
+
+    data class StateInfo(
+        val infoImage: Int? = null,
+        val infoMessage: String? = null,
+        val state: State = INFO,
+        val onInfoButtonClick: (() -> Unit)? = null,
+        val loadingAnimation: Animation? = null,
+        val loadingWithContentAnimation: Animation? = null
+    )
 }

@@ -112,7 +112,7 @@ class EventBean {
         ReleaseEvent,
         WatchEvent,
 
-        //Events of this type are not visible in timelines. These events are only used to trigger hooks.
+        //Events of this type are not com.example.mvvm_jetpack_lib.base.widget.visible in timelines. These events are only used to trigger hooks.
         DeploymentEvent,
         DeploymentStatusEvent,
         MembershipEvent,

@@ -19,9 +19,9 @@ class ProgressDialogFragment : DialogFragment() {
     private val SAVED_DIALOG_STATE_TAG = "android:savedDialogState"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        dialog.requestWindowFeature(STYLE_NO_TITLE)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.attributes?.dimAmount=0f
+        dialog?.requestWindowFeature(STYLE_NO_TITLE)
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog?.window?.attributes?.dimAmount=0f
         return inflater.inflate(R.layout.dialog_progress, container, false)
     }
 
@@ -37,16 +37,16 @@ class ProgressDialogFragment : DialogFragment() {
                     "DialogFragment can not be attached to a container view"
                 )
             }
-            dialog.setContentView(view)
+            dialog?.setContentView(view)
         }
         val activity = activity
         if (activity != null) {
-            dialog.setOwnerActivity(activity)
+            dialog?.setOwnerActivity(activity)
         }
         if (savedInstanceState != null) {
             val dialogState = savedInstanceState.getBundle(SAVED_DIALOG_STATE_TAG)
             if (dialogState != null) {
-                dialog.onRestoreInstanceState(dialogState)
+                dialog?.onRestoreInstanceState(dialogState)
             }
         }
 
@@ -65,7 +65,7 @@ class ProgressDialogFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
         val wd = DisplayUtils.getDeviceWidthAndHeight(activity!!)
-        dialog.window?.setLayout(wd[0]*2/5,wd[1]/4)
+        dialog?.window?.setLayout(wd[0]*2/5,wd[1]/4)
     }
 
     override fun onDestroyView() {

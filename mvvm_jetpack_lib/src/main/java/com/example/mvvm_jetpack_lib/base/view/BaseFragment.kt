@@ -15,11 +15,15 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
-import com.example.mvvm_jetpack_lib.base.view.BaseNorFragment
 import com.example.mvvm_jetpack_lib.base.viewmodel.BaseViewModel
+import java.lang.reflect.ParameterizedType
 
 /**
- * Description:
+ * Description:Fragment,对于不需要用到DataBinding的界面，直接写其父类
+ * DataViewBinding即可，这样不会使用DataBinding,而会直接使用inflate
+ * ,此时mViewModelVariableId=-1即可
+ * 对于不需要自己定义ViewModel的界面，直接使用NoViewModel即可(还是可以使用ViewModel的
+ * 一些基本方法，如跳转界面，显示加载对话框)
  * Date：2019/7/17-18:35
  * Author: cwh
  */
@@ -42,6 +46,8 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
 
     /**
      * ViewModel在DataBinding 中的ID
+     * 若为不想使用ViewDataBinding的Activity,mViewModelVariableId=-1即可
+     * (且指定的ViewDataBinding类型为ViewDataBinding)
      */
     abstract var mViewModelVariableId: Int
 
@@ -52,7 +58,7 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
 
     private lateinit var activity: Activity
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         context?.let {
             activity=context as Activity
@@ -60,8 +66,16 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = DataBindingUtil.inflate(inflater, layoutId, container, false)
-        return mBinding.root
+        val cls = getParamsType()?.actualTypeArguments?.get(1) as? Class<*>
+        //ViewBinding是ViewDataBinding的子类
+        return if (cls != null && ViewDataBinding::class.java != cls
+            && ViewDataBinding::class.java.isAssignableFrom(cls)
+        ) {
+            mBinding = DataBindingUtil.inflate(inflater, layoutId, container, false)
+            mBinding.root
+        }else{
+            inflater.inflate(layoutId,container,false)
+        }
     }
 
     override fun onDestroy() {
@@ -82,13 +96,25 @@ abstract class BaseFragment<VM : BaseViewModel<*>, V : ViewDataBinding> : BaseNo
         initViewObserver()
     }
 
+    private fun getParamsType(): ParameterizedType? {
+        val type = javaClass.genericSuperclass
+        return if (type is ParameterizedType) {
+            type
+        } else null
+    }
+
     /**
      * 将相关数据设置到DataBingding 中
      */
     protected open fun initDataBindingView() {
-        mBinding.setVariable(mViewModelVariableId, mViewModel)
-        mBinding.lifecycleOwner = this.viewLifecycleOwner
-        lifecycle.addObserver(mViewModel)
+        val cls = getParamsType()?.actualTypeArguments?.get(1) as? Class<*>
+        if (cls != null && ViewDataBinding::class.java != cls
+            && ViewDataBinding::class.java.isAssignableFrom(cls)
+        ) {
+            mBinding.setVariable(mViewModelVariableId, mViewModel)
+            mBinding.lifecycleOwner = this.viewLifecycleOwner
+            lifecycle.addObserver(mViewModel)
+        }
     }
 
     /**

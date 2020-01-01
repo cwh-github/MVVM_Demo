@@ -26,12 +26,18 @@
            app:title="Trend"
            app:titleTextColor="@color/secondaryLightColor"
            />
+        <com.example.mvvm_jetpack_lib.base.widget.StateLayout
+            android:id="@+id/mStatLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:sl_state="content"
+            app:layout_constraintTop_toBottomOf="@id/mToolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/mRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/mToolbar"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="match_parent"
             android:onRefresh="@{viewModel.command}"
             >
 
@@ -43,6 +49,7 @@
                 tools:listitem="@layout/item_recommend"
                 />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </com.example.mvvm_jetpack_lib.base.widget.StateLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

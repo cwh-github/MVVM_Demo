@@ -30,17 +30,13 @@ class RecommendFragment : BaseLazyFragment<RecommendViewModel, HomeDataBinding>(
     override val layoutId: Int = R.layout.fragment_recommend
     override var mViewModelVariableId: Int = BR.viewModel
 
-    lateinit var mStateLayout: StateLayout
 
     private var mData: ArrayList<RecommendBean> = ArrayList()
     private var mAdapter: RecommendAdapter? = null
     private var mPageNum = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mStateLayout =
-            StateLayout(mActivity.applicationContext).wrap(super.onCreateView(inflater, container, savedInstanceState))
-                .showLoading()
-        return mStateLayout
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
 
@@ -48,6 +44,7 @@ class RecommendFragment : BaseLazyFragment<RecommendViewModel, HomeDataBinding>(
     }
 
     override fun onFragmentFirstVisible() {
+        mStateLayout.showLoading()
         mViewModel.onRefresh()
     }
 

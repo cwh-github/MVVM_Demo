@@ -11,6 +11,7 @@ import com.example.mvvm_jetpack.R
 import com.example.mvvm_jetpack.databinding.MineDataBinding
 import com.example.mvvm_jetpack_lib.base.view.BaseFragment
 import com.example.mvvm_jetpack_lib.base.widget.StateLayout
+import kotlinx.android.synthetic.main.fragment_mine.*
 
 /**
  * Description:
@@ -25,16 +26,15 @@ class MineFragment : BaseFragment<MineViewModel, MineDataBinding>() {
         get() = R.layout.fragment_mine
     override var mViewModelVariableId: Int = BR.viewModel
 
-    private lateinit var mStatLayout: StateLayout
+
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mStatLayout = StateLayout(activity!!).wrap(super.onCreateView(inflater, container, savedInstanceState))
-            .showLoading()
-        return mStatLayout
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun initDataAndView() {
+        mStatLayout.showLoading()
         mViewModel.getMineInfo()
     }
 

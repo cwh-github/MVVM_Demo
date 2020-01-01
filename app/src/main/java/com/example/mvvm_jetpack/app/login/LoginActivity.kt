@@ -24,12 +24,10 @@ class LoginActivity : BaseActivity<LoginViewModel, LoginViewBinding>() {
 
     override var mProgressDialog: DialogFragment? = ProgressDialogFragment1.onNewInstance("tag")
 
-    lateinit var mStateLayout: StateLayout
 
     override fun initDataBingView() {
         super.initDataBingView()
-        //这里是可以的，主要是，DataBinding的主要作用是，获取view的id,将Id与view绑定，就算包裹一层，ID 也是不会变的
-        mStateLayout = StateLayout(this).wrap(this).showContentView()
+
     }
 
 

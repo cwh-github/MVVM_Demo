@@ -12,7 +12,6 @@ import com.example.mvvm_jetpack.R
 import com.example.mvvm_jetpack.app.bean.EventBean
 import com.example.mvvm_jetpack.databinding.FollowDataBinding
 import com.example.mvvm_jetpack_lib.base.view.BaseLazyFragment
-import com.example.mvvm_jetpack_lib.base.widget.StateLayout
 import kotlinx.android.synthetic.main.fragment_follow.*
 import java.util.*
 
@@ -32,7 +31,7 @@ class FollowFragment : BaseLazyFragment<FollowViewModel, FollowDataBinding>() {
     override var mViewModelVariableId: Int = BR.viewModel
 
 
-    private lateinit var mStateLayout: StateLayout
+
 
     private var mData:MutableList<EventBean> = ArrayList()
 
@@ -41,10 +40,7 @@ class FollowFragment : BaseLazyFragment<FollowViewModel, FollowDataBinding>() {
     private var mPageNum=1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mStateLayout = StateLayout(mActivity)
-            .wrap(super.onCreateView(inflater, container, savedInstanceState)).showLoading()
-
-        return mStateLayout
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
 
@@ -53,6 +49,7 @@ class FollowFragment : BaseLazyFragment<FollowViewModel, FollowDataBinding>() {
     }
 
     override fun onFragmentFirstVisible() {
+        mStateLayout.showLoading()
         mViewModel.onRefresh()
     }
 

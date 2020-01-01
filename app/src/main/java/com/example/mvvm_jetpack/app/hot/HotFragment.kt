@@ -33,18 +33,16 @@ class HotFragment : BaseFragment<HotViewModel, HotDataBinding>() {
     override var mViewModelVariableId: Int = BR.viewModel
 
 
-    private lateinit var mStatLayout: StateLayout
 
     private var mData: MutableList<HotDataBean> = ArrayList()
     private var mAdapter: HotAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mStatLayout = StateLayout(activity!!).wrap(super.onCreateView(inflater, container, savedInstanceState))
-            .showLoading()
-        return mStatLayout
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun initDataAndView() {
+        mStatLayout.showLoading()
         mViewModel.getTrending()
     }
 

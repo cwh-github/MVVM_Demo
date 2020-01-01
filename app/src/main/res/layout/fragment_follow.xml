@@ -18,24 +18,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/mRefreshLayout"
+        <com.example.mvvm_jetpack_lib.base.widget.StateLayout
+            android:id="@+id/mStateLayout"
+            app:sl_state="content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:onRefresh="@{viewModel.command}"
-            >
+            android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/mRecyclerView"
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/mRefreshLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:itemCount="5"
-                tools:listitem="@layout/item_follow"
-                />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:onRefresh="@{viewModel.command}"
+                >
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/mRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/item_follow"
+                    />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </com.example.mvvm_jetpack_lib.base.widget.StateLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
